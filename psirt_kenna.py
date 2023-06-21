@@ -3,25 +3,22 @@ import requests
 import json
 import logging
 import time
+import credentials
 
 logging.captureWarnings(True)
 
 psirt_endpoint = "https://apix.cisco.com/security/advisories/v2/all"
-kenna_api_token = "CmYzGyiY-M5CThfxinmnrRG3WTCgzDYtAvQNHrHrEUdQGYLYEK7U8azLPLcHSqxX$2a$06$cNhCuykBSkEqkSV14pa8A."
 kenna_endpoint = "https://api.trial1.eu.kennasecurity.com/vulnerability_definitions/"
-kenna_headers = {'content-type': 'application/json', 'X-Risk-Token':kenna_api_token}
+kenna_headers = {'content-type': 'application/json', 'X-Risk-Token':credentials.kenna_api_token}
 
 def get_new_token():
 
 	auth_server_url = "https://id.cisco.com/oauth2/default/v1/token"
-	client_id = '3494q48f3jfdk8dbvhtagdw5'
-	client_secret = 'RsYHQZW2tKtAHzqXB7Qpfdfg'
-
 	token_req_payload = {'grant_type': 'client_credentials'}
 
 	token_response = requests.post(auth_server_url,
 	data=token_req_payload, verify=False, allow_redirects=False,
-	auth=(client_id, client_secret))
+	auth=(credentials.client_id, credentials.client_secret))
 				 
 	if token_response.status_code !=200:
 		print("Failed to obtain token from the OAuth 2.0 server", file=sys.stderr)
