@@ -4,11 +4,12 @@ import json
 import logging
 import time
 import credentials
+import csv
 
 logging.captureWarnings(True)
 
 psirt_endpoint = "https://apix.cisco.com/security/advisories/v2/all"
-kenna_endpoint = "https://api.trial1.eu.kennasecurity.com/vulnerability_definitions/"
+kenna_endpoint = "https://api.eu.kennasecurity.com/vulnerability_definitions/"
 kenna_headers = {'content-type': 'application/json', 'X-Risk-Token':credentials.kenna_api_token}
 
 def get_new_token():
@@ -25,6 +26,7 @@ def get_new_token():
 		sys.exit(1)
 	else:
 		print("Successfuly obtained a new token")
+		print ("Getting PSIRT data - please wait")
 		tokens = json.loads(token_response.text)
 	return tokens['access_token']
 
@@ -43,8 +45,13 @@ def get_psirt():
 
 
 def get_kenna_cves():
-	print ('Getting PSIRT data')
+
 	psirt_json = get_psirt()
+	print ("Getting Kenna Scores...")
+	header = ['Advisory Title', 'Advisory ID', 'CVE' 'Kenna Score']
+	output = open('psirt_kenna_scores.csv', 'w')
+	writer = csv.writer(output)
+	writer.writerow(header)
 
 	for i in psirt_json['advisories']:
 		advisory_id = i['advisoryId']
@@ -55,19 +62,14 @@ def get_kenna_cves():
 				response = requests.request("GET", search_endpoint, headers=kenna_headers)
 				vuln_search = response.json()
 				kenna_score = vuln_search['vulnerability_definition']['risk_meter_score']
-				
-				print (advisory_id)
-				print (advisory_title)
-				print (n)
-				print (kenna_score)
-				print ()
-
+				row = advisory_title,advisory_id,n,kenna_score
+				writer.writerow(row)
 				time.sleep(.3)
-		
-	# print(json.dumps(psirt_json, indent=4))
+	output.close()
+	print ("Done - check output CSV")
 
-
-get_kenna_cves()
+if __name__ == "__main__":
+	get_kenna_cves()
 
 
 
