@@ -62,12 +62,12 @@ def get_kenna_cves():
 				response = requests.request("GET", search_endpoint, headers=kenna_headers)
 				vuln_search = response.json()
 				kenna_score = vuln_search['vulnerability_definition']['risk_meter_score']
-				active_internet_breach = ['vulnerability_definition']['active_internet_breach']
-				malware_exploitable = ['vulnerability_definition']['malware_exploitable']
-				easily_exploitable = ['vulnerability_definition']['easily_exploitable']
-				popular_target = ['vulnerability_definition']['popular_target']
-				remote_code_execution = ['vulnerability_definition']['remote_code_execution']
-				pre_nvd_chatter = ['vulnerability_definition']['pre_nvd_chatter']
+				active_internet_breach = vuln_search['vulnerability_definition']['active_internet_breach']
+				malware_exploitable = vuln_search['vulnerability_definition']['malware_exploitable']
+				easily_exploitable = vuln_search['vulnerability_definition']['easily_exploitable']
+				popular_target = vuln_search['vulnerability_definition']['popular_target']
+				remote_code_execution = vuln_search['vulnerability_definition']['remote_code_execution']
+				pre_nvd_chatter = vuln_search['vulnerability_definition']['pre_nvd_chatter']
 				row = advisory_title,advisory_id,n,kenna_score,active_internet_breach,malware_exploitable,easily_exploitable,popular_target,remote_code_execution,pre_nvd_chatter
 				writer.writerow(row)
 				time.sleep(.3)
